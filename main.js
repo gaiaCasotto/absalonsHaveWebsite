@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { MeshoptDecoder } from 'three/addons/libs/meshopt_decoder.module.js';
 
 // ---------- Scene layout ----------
 // The horizon sits a quarter of the way up from the bottom of the screen.
@@ -239,7 +240,9 @@ async function hop() {
   await turnTo(facingViewer(target), 420);
 }
 
-new GLTFLoader().load(
+// The model's shape data is meshopt-compressed and its texture is WebP, which
+// keeps the download about half the size; the decoder unpacks the shape.
+new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).load(
   'assets/toad.glb',
   gltf => {
     const model = gltf.scene;
