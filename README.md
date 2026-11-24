@@ -58,8 +58,6 @@ Wi-Fi, run `python3 serve.py 8000 0.0.0.0` and open
 
 ## Still to do
 
-- "Payments" on the Info page has no text yet.
-- "Programme" on the 2027 page has no page yet.
 - The play buttons need the track.
 - The hop is a placeholder made in code: the whole toad moves in an arc
   without moving its legs. It is to be replaced by a hop animated in Blender.
