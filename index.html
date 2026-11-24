@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Absalons Have</title>
+  <link rel="preload" href="fonts/BoecklinsUniverse.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
+</head>
+<body>
+  <canvas id="scene" aria-label="A toad sitting on the ground. Tap it to make it hop."></canvas>
+  <!-- Covers the night scene on the Info page, which is plain dark. -->
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <!-- The pages share one 3D scene; main.js shows one at a time from the
+       address (#info, #krolle-bolle, #2026, #2027, or nothing for home). -->
+  <section class="page" data-page="home">
+    <header class="title">
+      <h1 tabindex="-1">Absalons Have</h1>
+    </header>
+    <nav class="menu" aria-label="Festival">
+      <a href="#info">Info</a>
+      <a href="https://www.tickettailor.com/events/absalonsljer" target="_blank" rel="noopener">Tickets</a>
+      <a href="https://t.me/+RMSGSZg3211lMWE8" target="_blank" rel="noopener">Telegram</a>
+      <a href="#krolle-bolle">Krølle Bølle</a>
+    </nav>
+    <nav class="years" aria-label="Other years">
+      <a class="years-last" href="#2026">Last Year</a>
+      <a class="years-next" href="#2027">Next Year</a>
+    </nav>
+  </section>
+
+  <section class="page page-year" data-page="2027" hidden>
+    <nav class="year-bar" aria-label="Site">
+      <a class="year-bar-logo" href="#">Absalons Have</a>
+    </nav>
+    <header class="year-title">
+      <h1 tabindex="-1">June 2027</h1>
+      <p class="dates">Exact dates to be announced</p>
+    </header>
+    <!-- Same play button as on 2026: turns into the spinning logo while playing. -->
+    <button class="play" type="button" aria-label="Play track" aria-pressed="false">
+      <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l12-7.2a1 1 0 0 0 0-1.72l-12-7.2A1 1 0 0 0 7 4.8Z"/></svg>
+      <img class="play-logo" src="assets/logo-toad.png" width="314" height="222" alt="">
+    </button>
+    <nav class="years" aria-label="Other years">
+      <a class="years-last" href="#2026">Last Year</a>
+      <span class="years-next" aria-disabled="true">Next Year</span>
+    </nav>
+  </section>
+
+  <section class="page page-year page-lift" data-page="2026" hidden>
+    <nav class="year-bar" aria-label="Site">
+      <a class="year-bar-logo" href="#">Absalons Have</a>
+    </nav>
+    <header class="year-title">
+      <h1 tabindex="-1">2026</h1>
+      <p class="dates">Bornholm June 25 - 28</p>
+    </header>
+    <!-- Play button: while "playing" it turns into the spinning logo; clicking
+         again brings the play triangle back. The track itself will be hooked
+         up to this button (main.js, "Play button"). -->
+    <button class="play" type="button" aria-label="Play track" aria-pressed="false">
+      <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l12-7.2a1 1 0 0 0 0-1.72l-12-7.2A1 1 0 0 0 7 4.8Z"/></svg>
+      <img class="play-logo" src="assets/logo-toad.png" width="314" height="222" alt="">
+    </button>
+    <!-- The line-up and the pictures scroll in a window between the "2026"
+         heading and the horizon: they rise from behind the horizon and fade
+         out at the top, while the heading, the dates and the play button
+         scroll up and fade away. -->
+    <section class="programme" aria-label="Line-up and pictures from 2026">
+      <!-- From the 2026 festival T-shirt; "new-line" marks where the print starts a new line,
+           "phone-break" where phones split that line in two. -->
+      <ul class="lineup">
+        <li>Alfredo 92</li>
+        <li>Alvin Temponeras (Live)</li>
+        <li class="phone-break">Araknyl</li>
+        <li>Asca</li>
+        <li class="new-line">Chrisser</li>
+        <li>DJ spiller musik</li>
+        <li class="phone-break">Eofy</li>
+        <li>Eru (Live)</li>
+        <li>Ezy (Live)</li>
+        <li class="new-line">FILTH.y</li>
+        <li>Filen</li>
+        <li>Frølår</li>
+        <li class="phone-break">fruit dj</li>
+        <li>Ghillie (Live)</li>
+        <li class="new-line">Goasis</li>
+        <li>Hassdenteufel</li>
+        <li class="phone-break">Heddah</li>
+        <li>Hugo</li>
+        <li>Hutti Heita (Live)</li>
+        <li class="new-line">Ida Engelhardt</li>
+        <li>Ingvil</li>
+        <li class="phone-break">Item 9 (Hybrid)</li>
+        <li>Jeroen</li>
+        <li class="new-line">Jidder, Gooutonahinote, Hiet &amp; Spektakkel pres. Ursekt (Live)</li>
+        <li class="new-line">Ka-sol (Live)</li>
+        <li>Kasper Marott</li>
+        <li class="phone-break">Kristian Andersen</li>
+        <li class="new-line">Lucy Headburn</li>
+        <li>Mademoisel</li>
+        <li class="phone-break">Mana Pool (Live)</li>
+        <li>Maurinstarr (Live)</li>
+        <li class="new-line">Mikkel Ulriksen</li>
+        <li>My Gander</li>
+        <li>Neri J</li>
+        <li class="phone-break">Ole slukøje</li>
+        <li>phloem</li>
+        <li>PLAZA</li>
+        <li class="new-line">Psicotek (Live)</li>
+        <li>Respira</li>
+        <li>Rut fessler</li>
+        <li class="phone-break">Samsnavs</li>
+        <li>Scano (Live)</li>
+        <li class="new-line">Schoiroidearis (Live)</li>
+        <li>Sham</li>
+        <li class="phone-break">Signe Alarcón</li>
+        <li>Spekki Webu</li>
+        <li class="new-line">Theiamani (Live)</li>
+        <li>Time For Slime (Live)</li>
+        <li class="phone-break">Timmyia</li>
+        <li>Troels Hass</li>
+        <li class="new-line">Wendy</li>
+        <li>Whrikk</li>
+        <li>WHRK (Live)</li>
+      </ul>
+      <!-- Placed as in the Figma frame "Website: home (desktop 1440) — copy 5". -->
+      <div class="gallery">
+        <img class="gallery-6" src="assets/2026/pic6.jpg" width="1280" height="721" loading="lazy" decoding="async"
+             alt="A crowd under trees lit orange and red, next to a red tent at night">
+        <img class="gallery-3" src="assets/2026/pic3.jpg" width="960" height="1280" loading="lazy" decoding="async"
+             alt="Wooden steps leading up through an arched tunnel of green leaves, with light falling through">
+        <img class="gallery-2" src="assets/2026/pic2.jpg" width="576" height="1280" loading="lazy" decoding="async"
+             alt="A field at sunset with a folding chair and a small sign in the grass">
+        <img class="gallery-5" src="assets/2026/pic5.jpg" width="1280" height="960" loading="lazy" decoding="async"
+             alt="A giant frog woven from branches, with glowing eyes, under a red tent roof">
+        <img class="gallery-1" src="assets/2026/pic1.jpg" width="1280" height="576" loading="lazy" decoding="async"
+             alt="People sitting by a pond at dusk, its surface lit by golden lights under green trees">
+      </div>
+    </section>
+    <nav class="years" aria-label="Other years">
+      <span class="years-last" aria-disabled="true">Last Year</span>
+      <a class="years-next" href="#2027">Next Year</a>
+    </nav>
+  </section>
+
+  <section class="page page-flat page-info" data-page="info" hidden>
+    <nav class="year-bar" aria-label="Site">
+      <a class="year-bar-logo" href="#">Absalons Have</a>
+      <!-- Same play button as on the year pages, here in the top right corner. -->
+      <button class="play play-corner" type="button" aria-label="Play track" aria-pressed="false">
+        <svg class="play-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.8v14.4a1 1 0 0 0 1.5.86l12-7.2a1 1 0 0 0 0-1.72l-12-7.2A1 1 0 0 0 7 4.8Z"/></svg>
+        <img class="play-logo" src="assets/logo-toad.png" width="314" height="222" alt="">
+      </button>
+    </nav>
+    <div class="info-scroll">
+      <h1 class="visually-hidden" tabindex="-1">Info</h1>
+      <!-- About Absalons Have: the opening text of the page. -->
+      <div class="info-about">
+        <p>Absalons Have takes place at a private farmhouse collective.</p>
+        <p>The residents of the place will be present, and it is very important that you respect the place and do not wander into the private areas.</p>
+      </div>
+      <form class="info-search" role="search" onsubmit="return false">
+        <label class="visually-hidden" for="info-search">Search the FAQs</label>
+        <input id="info-search" type="search" placeholder="Search FAQs here" autocomplete="off">
+      </form>
+      <!-- Frequently asked questions. Write each answer inside its <div class="info-body">. -->
+      <div class="info-list">
+        <details>
+          <summary>Transportation &amp; Parking</summary>
+          <div class="info-body">
+            <p>There is parking available. Follow the signs.</p>
+            <p>If you don’t use our shuttles, there is public transport about a 30-minute walk from the festival. Use Google Maps.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Camping</summary>
+          <div class="info-body">
+            <p>Follow the signs to the field, where you can set up your tent.</p>
+            <p>Camping outside of the field is not allowed.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Tickets &amp; entry</summary>
+          <div class="info-body">
+            <p>When you arrive, go to the indoor bar and show your ticket and proof of registration to get your wristband.</p>
+            <p>Guests without wristbands will be asked to leave.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Payments</summary>
+          <div class="info-body"><p>More information coming soon.</p></div>
+        </details>
+        <details>
+          <summary>Dos and Don’ts</summary>
+          <div class="info-body">
+            <p>Respect the place: the residents live here. Do not wander into the private areas.</p>
+            <p>Wear your wristband. Guests without wristbands will be asked to leave.</p>
+            <p>Camp only in the field.</p>
+            <p>Please don’t bring your own alcohol, and please reuse your cups.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Food &amp; Drinks</summary>
+          <div class="info-body">
+            <p>There will be 2 bars serving draft beer, drinks, shots and water. Please don’t bring your own alcohol. Please reuse your cups.</p>
+            <p>Breakfast/lunch is served 12–16, and a vegan dinner 18–21 (and later if needed). There are also coffee, smoothies and other things most of the day.</p>
+          </div>
+        </details>
+        <details>
+          <summary>Toilets &amp; Showers</summary>
+          <div class="info-body">
+            <p>There will be toilets and an outdoor shower.</p>
+          </div>
+        </details>
+      </div>
+      <p class="info-empty" hidden>Nothing found. Try another word.</p>
+      <p class="info-contact">
+        Didn’t find what you were looking for?<br>
+        Please contact us on our <a href="https://t.me/+RMSGSZg3211lMWE8" target="_blank" rel="noopener">Telegram</a> group.
+      </p>
+
+      <!-- The logo standing on the ground; not a link. -->
+      <div class="info-footer">
+        <img src="assets/logo-toad.png" width="314" height="222" alt="Absalons Have logo">
+      </div>
+    </div>
+  </section>
+
+  <section class="page page-flat page-story" data-page="krolle-bolle" hidden>
+    <nav class="year-bar" aria-label="Site">
+      <a class="year-bar-logo" href="#">Absalons Have</a>
+    </nav>
+    <div class="story-scroll">
+      <article class="story">
+        <h1 tabindex="-1">Krølle-Bølle</h1>
+        <p>Deep beneath the Langebjerg hill on Bornholm, the ground opens up every midnight on glowing pillars. Out steps Krølle-Bølle, a real, mischievous troll boy with a single curl on his head and tail.</p>
+        <p>He lives in the underground kingdom with his powerful father King Bobbarækus, Queen Bobbasina, and sister Borra. While his family guards their subterranean treasures, Krølle-Bølle prefers to slip away into the human world.</p>
+        <p>He roams the moonlit forests near Hammershus Castle, looking for farmers and livestock to playfully torment. The tiny troll hides milk pails, unties stable horses, and tangles the wool of sleeping sheep. If a human spots him, he instantly activates ancient underground magic to vanish into the shadows.</p>
+        <p>Locals across northern Bornholm know his tricks well and always keep a watchful eye on their belongings. They say that if your keys suddenly go missing, Krølle-Bølle is nearby laughing at your confusion.</p>
+        <p>He remains the island’s living spirit of mischief, safely returning beneath the heavy rocks before sunrise.</p>
+      </article>
+    </div>
+  </section>
+
+  <p class="hint" id="hint">Loading the toad…</p>
+
+  <script type="module" src="main.js"></script>
+</body>
+</html>

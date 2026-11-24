@@ -1,0 +1,746 @@
+@font-face {
+  font-family: "Boecklins Universe";
+  src: url("fonts/BoecklinsUniverse.woff2") format("woff2");
+  font-display: swap;
+}
+
+/* Inter Regular by The Inter Project Authors, SIL Open Font License
+   (fonts/Inter-OFL.txt), for reading text. Cut down to Latin letters,
+   including æ, ø and å. */
+@font-face {
+  font-family: "Inter";
+  src: url("fonts/Inter-Regular.woff2") format("woff2");
+  font-display: swap;
+}
+
+/* Colours from the Absalons Have palette in Figma. */
+:root {
+  --night-paper: #2e2114;
+  --witch-hat: #1c1710;
+  --soil: #6d462e;
+  --moon: #b6a39c;
+  --chalk: #f9ebdf;
+  --toadstool: #d65f6a;
+  --frog-green: #a4a05f;
+  --link: #ffffff;
+  --link-disabled: #9d9d9d;
+
+  /* Longer reading text: a plain font in a warm grey-brown, softer than white. */
+  --read-font: "Inter", system-ui, sans-serif;
+  --read-text: var(--moon);
+
+  /* Must match the soil colour of the 3D ground in main.js. */
+  --ground: #3a2e22;
+
+  /* Must match HORIZON_COLOR in main.js so the ground fades into the sky. */
+  --horizon: #3a2c1e;
+  --horizon-line: 75%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  overflow: hidden;
+  background: var(--witch-hat);
+  color: var(--chalk);
+  font-family: "Boecklins Universe", Georgia, serif;
+}
+
+/* The sky, behind the 3D scene. Fixed to the screen so it stays in place
+   while a page scrolls. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    to bottom,
+    var(--witch-hat) 0%,
+    var(--night-paper) 45%,
+    var(--horizon) var(--horizon-line),
+    var(--horizon) 100%
+  );
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  touch-action: none;
+}
+
+#scene.is-over-toad {
+  cursor: pointer;
+}
+
+/* Plain dark background for the Info page; fades over the night scene. */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--witch-hat);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 500ms;
+}
+
+body.is-flat .backdrop {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- Info page ----------
+   Placed as in the Figma frame "Website: info (desktop 1440)": the About text
+   under the top bar, the search field, the questions that open, the Telegram
+   line, and the logo standing on the ground at the very bottom. */
+.info-scroll {
+  position: fixed;
+  top: 16vh;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 3vh max(3.2vw, 16px) 0;
+  overflow-y: auto;
+  pointer-events: auto;
+  color: var(--frog-green);
+}
+
+.info-about {
+  max-width: 34rem;
+  margin: 0 auto 12vh;
+  text-align: center;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--read-text);
+}
+
+.info-about p {
+  margin: 0 0 0.6em;
+}
+
+.info-search {
+  width: min(520px, 100%);
+  margin: 0 auto 10vh;
+}
+
+.info-search input {
+  width: 100%;
+  padding: 0 0 2px;
+  border: 0;
+  border-bottom: 1px solid var(--frog-green);
+  border-radius: 0;
+  background: transparent;
+  font: inherit;
+  font-size: clamp(1.4rem, 2.2vw, 2rem);
+  line-height: 1.4;
+  color: var(--chalk);
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+.info-search input::placeholder {
+  color: var(--moon);
+  opacity: 1;
+}
+
+.info-search input:focus {
+  outline: none;
+  border-bottom-color: var(--chalk);
+}
+
+.info-list details {
+  border-bottom: 1px solid var(--frog-green);
+}
+
+.info-list summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 0;
+  font-size: clamp(1.1rem, 1.7vw, 1.5rem);
+  line-height: 1.4;
+  cursor: pointer;
+  list-style: none;
+}
+
+.info-list summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Lucide chevron-down at stroke 1.5, turned up when the section is open. */
+.info-list summary::after {
+  content: "";
+  flex: none;
+  width: 24px;
+  height: 24px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 200ms;
+}
+
+.info-list details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.info-list summary:hover,
+.info-list summary:focus-visible {
+  color: var(--chalk);
+  outline: none;
+}
+
+.info-body {
+  max-width: 46rem;
+  padding: 0 0 24px;
+  font-family: var(--read-font);
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--read-text);
+}
+
+.info-body p {
+  margin: 0 0 0.8em;
+}
+
+.info-empty {
+  margin: 24px 0 0;
+  font-family: var(--read-font);
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  color: var(--moon);
+}
+
+.info-contact {
+  position: relative;
+  z-index: 1;   /* in front of the horizon glow that rises from the footer */
+  margin: 64px 0 0;
+  text-align: center;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--read-text);
+}
+
+.info-contact a {
+  color: var(--frog-green);
+  text-decoration: none;
+}
+
+.info-contact a:hover,
+.info-contact a:focus-visible {
+  color: var(--chalk);
+}
+
+/* The logo stands on a strip of speckled ground that runs the full width,
+   with the same horizon as the night scene: the sky warms to the horizon
+   colour, and a haze lies over the far edge of the ground. */
+.info-footer {
+  position: relative;
+  height: 273px;
+  margin: 0 calc(-1 * max(3.2vw, 16px));
+  background:
+    url("assets/ground-strip.png") left bottom / 1440px 225px repeat-x,
+    linear-gradient(to bottom, var(--horizon), transparent 45px) left bottom / 100% 225px no-repeat,
+    linear-gradient(var(--ground), var(--ground)) left bottom / 100% 225px no-repeat;
+}
+
+.info-footer::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 225px;
+  height: 220px;
+  background: linear-gradient(to bottom, transparent, var(--horizon));
+  pointer-events: none;
+}
+
+.info-footer img {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  top: 0;
+  width: 314px;
+  max-width: 70vw;
+  height: auto;
+  transform: translateX(-50%);
+}
+
+/* ---------- Krølle-Bølle page ----------
+   Plain dark like Info: the story in one centred column that scrolls. */
+.story-scroll {
+  position: fixed;
+  top: 16vh;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 4vh 16px 10vh;
+  overflow-y: auto;
+  pointer-events: auto;
+}
+
+.story {
+  max-width: 40rem;
+  margin: 0 auto;
+  text-align: center;
+  color: var(--read-text);
+  font-size: clamp(1rem, 1.3vw, 1.2rem);
+  line-height: 1.7;
+}
+
+.story h1 {
+  margin: 0 0 1.2em;
+  font-weight: normal;
+  font-size: clamp(2.4rem, 4.4vw, 4rem);
+  line-height: 1;
+  color: var(--frog-green);
+  text-shadow: 0 0 18px rgba(214, 95, 106, 0.35);
+}
+
+.story h1:focus {
+  outline: none;
+}
+
+.story p {
+  margin: 0 0 1.1em;
+}
+
+/* Each page fills the screen, so the fixed text inside it stays put while
+   the page itself slides during a change of page. */
+.page {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+}
+
+.title {
+  position: fixed;
+  top: max(6vh, env(safe-area-inset-top));
+  left: 0;
+  right: 0;
+  padding-left: max(16px, env(safe-area-inset-left));
+  padding-right: max(16px, env(safe-area-inset-right));
+  text-align: center;
+  pointer-events: none;
+}
+
+.title h1 {
+  text-wrap: balance;
+  margin: 0;
+  font-weight: normal;
+  font-size: clamp(2.6rem, 9vw, 6.5rem);
+  line-height: 1;
+  color: var(--frog-green);
+  text-shadow: 0 0 18px rgba(214, 95, 106, 0.35);
+}
+
+.title h1:focus {
+  outline: none;
+}
+
+/* ---------- Year pages ----------
+   Placed as in the Figma frames (1440 × 900): "Absalons Have" top left and
+   "Home" top right, the year in the middle with its dates under it. */
+.year-bar {
+  position: fixed;
+  top: max(5vh, env(safe-area-inset-top));
+  left: max(3.3vw, 16px, env(safe-area-inset-left));
+  right: max(4vw, 16px, env(safe-area-inset-right));
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.year-bar a,
+.year-title h1 {
+  font-weight: normal;
+  line-height: 1;
+  color: var(--frog-green);
+  text-shadow: 0 0 18px rgba(214, 95, 106, 0.35);
+  text-decoration: none;
+}
+
+.year-bar a {
+  font-size: clamp(1.6rem, 3.3vw, 3rem);
+  pointer-events: auto;
+  transition: color 200ms;
+}
+
+.year-bar a:hover {
+  color: var(--link);
+}
+
+.year-bar a:focus-visible {
+  outline: 1px solid var(--frog-green);
+  outline-offset: 4px;
+}
+
+.year-title {
+  position: fixed;
+  top: 17vh;
+  left: 0;
+  right: 0;
+  padding: 0 16px;
+  text-align: center;
+}
+
+.year-title h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 4.4vw, 4rem);
+}
+
+.year-title h1:focus {
+  outline: none;
+}
+
+.dates {
+  margin: 0.9em 0 0;
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1;
+  color: var(--link);
+}
+
+/* 2026 line-up and pictures: a window between the "2026" heading and the
+   horizon. They rise from behind the horizon as you scroll and fade out at
+   the top; the heading, the dates and the play button scroll up and fade
+   away first (see "Lifting the heading" below). */
+.programme {
+  position: fixed;
+  top: 17vh;   /* the height of the "2026" heading */
+  /* The horizon, measured like the 3D scene: on phones vh counts the screen
+     as if the browser bars were hidden, so it would end too high. */
+  bottom: calc(100% - var(--horizon-line));
+  left: 50%;
+  width: min(64vw, 960px);
+  transform: translateX(-50%);
+  /* Starts the first line well below the play button, which sits at 49vh. */
+  padding: calc(32vh + 140px) 0 4rem;
+  padding-top: calc(32dvh + 140px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  pointer-events: auto;
+  touch-action: pan-y;
+  text-align: center;
+  color: var(--link);
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 3rem, #000 calc(100% - 1.5rem), transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 3rem, #000 calc(100% - 1.5rem), transparent);
+}
+
+.programme::-webkit-scrollbar {
+  display: none;
+}
+
+/* The pictures keep the Figma arrangement (a block 558 × 863 px at 1440 wide),
+   scaled with the screen. */
+.gallery {
+  position: relative;
+  width: min(39vw, 100%);
+  aspect-ratio: 558 / 863;
+  margin: 5rem auto 0;
+}
+
+.gallery img {
+  position: absolute;
+  display: block;
+  object-fit: cover;
+}
+
+.gallery-6 { left: 0;      top: 0;      width: 56.09%; height: 20.39%; }
+.gallery-3 { left: 62.19%; top: 0;      width: 37.81%; height: 32.44%; }
+.gallery-2 { left: 0;      top: 27%;    width: 28.85%; height: 41.25%; }
+.gallery-5 { left: 33.15%; top: 35.23%; width: 66.85%; height: 32.44%; }
+.gallery-1 { left: 0;      top: 70.92%; width: 100%;   height: 29.08%; }
+
+.lineup {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  text-wrap: balance;
+  font-size: clamp(0.8rem, 1.2vw, 1.1rem);
+  line-height: 1.45;
+}
+
+.lineup li {
+  display: inline;
+}
+
+/* Dots between names, and a line break wherever the T-shirt starts a new line. */
+.lineup li + li::before {
+  content: " • ";
+  color: var(--moon);
+}
+
+.lineup li.new-line::before {
+  content: "\A";
+  white-space: pre;
+}
+
+/* On narrow screens there is no room beside the year links, so they move up
+   under the dates and the scrolling column takes the full width below them,
+   with the line-up small enough to keep the T-shirt's lines. */
+@media (max-width: 760px) {
+  .page-year .years > * {
+    top: 28vh;
+  }
+
+  /* The year links sit under the dates here, so the window starts just
+     below them rather than at the "2026" heading. */
+  .programme {
+    top: calc(28vh + 36px);
+    top: calc(28dvh + 36px);
+    left: 8px;
+    right: 8px;
+    width: auto;
+    transform: none;
+    padding-top: 74px;
+  }
+
+  /* Each T-shirt line is split in two here, so the text can be bigger. */
+  .lineup {
+    font-size: min(1.05rem, 4.1vw);
+    line-height: 1.55;
+  }
+
+  .lineup li.phone-break::before {
+    content: "\A";
+    white-space: pre;
+  }
+
+  /* Phones: the pictures one above the other, full width, instead of the
+     Figma arrangement. */
+  .gallery {
+    width: 100%;
+    aspect-ratio: auto;
+    margin-top: 3rem;
+  }
+
+  .gallery img {
+    position: static;
+    width: 100%;
+    height: auto;
+    margin: 0 0 16px;
+  }
+}
+
+/* Menu and year links, placed as in the Figma frame (1440 × 900):
+   the menu starts a third of the way down, the years just below the middle. */
+.menu,
+.years > * {
+  position: fixed;
+  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  line-height: 1;
+}
+
+.menu {
+  top: 32vh;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6em;
+  pointer-events: none;
+}
+
+.years > * {
+  top: 49vh;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* There is no year before 2026 or after 2027 yet. */
+.years [aria-disabled="true"] {
+  color: var(--link-disabled);
+}
+
+.years-last {
+  left: 24.5%;
+}
+
+.years-next {
+  left: 75%;
+}
+
+/* On the year pages the links sit out near the edges to leave the middle
+   to the line-up. */
+@media (min-width: 761px) {
+  .page-year .years-last {
+    left: 10%;
+  }
+
+  .page-year .years-next {
+    left: 90%;
+  }
+}
+
+.menu a,
+.years a {
+  color: var(--link);
+  text-decoration: none;
+  pointer-events: auto;
+  transition: color 200ms;
+}
+
+.menu a:hover,
+.years a:hover {
+  color: var(--frog-green);
+}
+
+.menu a:focus-visible,
+.years a:focus-visible {
+  outline: 1px solid var(--frog-green);
+  outline-offset: 4px;
+}
+
+.hint {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: max(2.5vh, env(safe-area-inset-bottom));
+  margin: 0;
+  text-align: center;
+  font-size: 1.1rem;
+  letter-spacing: 0.04em;
+  color: var(--moon);
+  pointer-events: none;
+  transition: opacity 600ms;
+}
+
+.hint.is-hidden {
+  opacity: 0;
+}
+
+/* Play button: centred, level with the year links. */
+.play {
+  position: absolute;
+  z-index: 2;   /* in front of the line-up window on 2026 */
+  top: 49vh;
+  left: 50%;
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--frog-green);
+  cursor: pointer;
+  pointer-events: auto;
+  transform: translate(-50%, -30%);
+  transition: color 200ms;
+}
+
+.play svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+  filter: drop-shadow(0 0 10px rgba(214, 95, 106, 0.35));
+}
+
+/* In a corner (Info page): sits in the top bar, level with "Absalons Have". */
+.play.play-corner {
+  position: relative;
+  top: auto;
+  left: auto;
+  align-self: center;
+  flex: none;
+  width: 56px;
+  height: 56px;
+  transform: none;
+}
+
+.play.play-corner .play-logo {
+  width: 120px;
+  margin: -42px 0 0 -60px;
+}
+
+/* While playing, the triangle gives way to the logo, turning at a steady pace. */
+.play-logo {
+  display: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 96px;
+  height: auto;
+  margin: -34px 0 0 -48px;
+  animation: play-spin 6s linear infinite;
+}
+
+.play.is-playing .play-icon {
+  display: none;
+}
+
+.play.is-playing .play-logo {
+  display: block;
+}
+
+@keyframes play-spin {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .play-logo {
+    animation-duration: 24s;
+  }
+}
+
+.play:hover {
+  color: var(--chalk);
+}
+
+.play:focus-visible {
+  outline: 1px solid var(--frog-green);
+  outline-offset: 4px;
+}
+
+/* Phones: the year links sit under the dates, so the play button goes between them. */
+@media (max-width: 760px) {
+  .page-year .play {
+    top: 28vh;
+  }
+}
+
+/* ---------- Lifting the heading (2026) ----------
+   The year, the dates and the play button scroll up with the line-up window
+   (main.js sets --lift to how far it has scrolled) and fade out on the way,
+   before they reach "Absalons Have" at the top. */
+.page-lift .year-title {
+  transform: translateY(calc(var(--lift, 0) * -1px));
+  opacity: calc(1 - var(--lift, 0) / 110);
+}
+
+.page-lift .play {
+  transform: translate(-50%, calc(-30% - var(--lift, 0) * 1px));
+  opacity: calc(1 - var(--lift, 0) / 300);
+}
+
+@media (max-width: 760px) {
+  .page-lift .year-title {
+    opacity: calc(1 - var(--lift, 0) / 60);
+  }
+
+  .page-lift .play {
+    opacity: calc(1 - var(--lift, 0) / 150);
+  }
+}
